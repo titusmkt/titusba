@@ -1,0 +1,746 @@
+<!DOCTYPE html>
+<html lang="zh-HK">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>夢幻蛋糕訂製工作室</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #FF69B4;
+            --secondary-color: #FFB6C1;
+            --accent-color: #FFC0CB;
+            --text-color: #4A4A4A;
+            --background-color: #FFF5F5;
+            --box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            --border-radius: 15px;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: var(--background-color);
+            color: var(--text-color);
+            min-height: 100vh;
+        }
+
+        /* 頂部導航 */
+        .header {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            padding: 1rem;
+            text-align: center;
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+            box-shadow: var(--box-shadow);
+        }
+
+        .header h1 {
+            font-size: 1.8rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .header p {
+            font-size: 1rem;
+            opacity: 0.9;
+        }
+
+        /* 主容器 */
+        .container {
+            max-width: 1200px;
+            margin: 80px auto 0;
+            padding: 20px;
+        }
+
+        /* 歡迎區塊 */
+        .welcome-section {
+            text-align: center;
+            padding: 40px 20px;
+            margin-bottom: 30px;
+            background: white;
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+        }
+
+        .welcome-section h2 {
+            color: var(--primary-color);
+            margin-bottom: 15px;
+        }
+
+        /* 主題選擇器 */
+        .theme-selector {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .theme-card {
+            background: white;
+            border-radius: var(--border-radius);
+            padding: 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: var(--box-shadow);
+            border: 3px solid transparent;
+        }
+
+        .theme-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .theme-card.selected {
+            border-color: var(--primary-color);
+        }
+
+        .theme-card i {
+            font-size: 2.5rem;
+            color: var(--primary-color);
+            margin-bottom: 15px;
+        }
+
+        /* 設計區塊 */
+        .design-section {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+
+        @media (max-width: 768px) {
+            .design-section {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* 預覽區塊 */
+        .preview-box {
+            background: white;
+            border-radius: var(--border-radius);
+            padding: 20px;
+            box-shadow: var(--box-shadow);
+            text-align: center;
+        }
+
+        .cake-preview {
+            width: 300px;
+            height: 300px;
+            margin: 0 auto;
+            position: relative;
+            perspective: 1000px;
+        }
+
+        .cake-container {
+            width: 100%;
+            height: 100%;
+            position: relative;
+            transform-style: preserve-3d;
+            animation: rotate 20s infinite linear;
+        }
+
+        @keyframes rotate {
+            from { transform: rotateY(0deg); }
+            to { transform: rotateY(360deg); }
+        }
+
+        .cake-layer {
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+            border-radius: 50%;
+            background: linear-gradient(45deg, rgba(255,255,255,0.2), transparent);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            overflow: hidden;
+        }
+
+        /* 為每個蛋糕層添加紋理 */
+        .layer-texture {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                radial-gradient(circle at 30% 30%, rgba(255,255,255,0.2) 0%, transparent 10%),
+                radial-gradient(circle at 70% 60%, rgba(255,255,255,0.2) 0%, transparent 10%);
+        }
+
+        .cake-decoration {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+        }
+
+        /* 配料選擇器樣式 */
+        .ingredients-selector {
+            background: white;
+            border-radius: var(--border-radius);
+            padding: 20px;
+            box-shadow: var(--box-shadow);
+        }
+
+        .selector-group {
+            margin-bottom: 20px;
+        }
+
+        .selector-title {
+            color: var(--primary-color);
+            margin-bottom: 15px;
+            font-size: 1.2rem;
+        }
+
+        .options-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+            gap: 10px;
+        }
+
+        .option-item {
+            background: var(--background-color);
+            border-radius: 8px;
+            padding: 10px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .option-item:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .option-item.selected {
+            background: var(--primary-color);
+            color: white;
+        }
+
+        /* 尺寸選擇器 */
+        .size-selector {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin: 20px 0;
+        }
+
+        .size-option {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            border: 2px solid var(--primary-color);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background: white;
+        }
+
+        .size-option.selected {
+            background: var(--primary-color);
+            color: white;
+        }
+
+        /* 價格計算器 */
+        .price-calculator {
+            background: white;
+            border-radius: var(--border-radius);
+            padding: 20px;
+            margin-top: 30px;
+            box-shadow: var(--box-shadow);
+        }
+
+        .price-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px 0;
+            border-bottom: 1px solid #eee;
+        }
+
+        .total-price {
+            font-size: 1.5rem;
+            color: var(--primary-color);
+            font-weight: bold;
+            margin-top: 15px;
+        }
+
+        /* 訂購按鈕 */
+        .order-button {
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 25px;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            width: 100%;
+            margin-top: 20px;
+        }
+
+        .order-button:hover {
+            background: var(--secondary-color);
+            transform: translateY(-2px);
+        }
+
+        /* 裝飾元素 */
+        .decoration-item {
+            position: absolute;
+            animation: float 2s ease infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-5px); }
+        }
+
+        /* 文字裝飾編輯器 */
+        .text-decorator {
+            background: white;
+            border-radius: var(--border-radius);
+            padding: 20px;
+            margin-top: 20px;
+            box-shadow: var(--box-shadow);
+        }
+
+        .text-input {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid var(--primary-color);
+            border-radius: 8px;
+            margin-bottom: 15px;
+            font-size: 1rem;
+        }
+
+        .font-selector {
+            display: flex;
+            gap: 10px;
+            overflow-x: auto;
+            padding: 5px;
+            margin-bottom: 15px;
+        }
+
+        .font-option {
+            padding: 8px 15px;
+            border: 1px solid var(--primary-color);
+            border-radius: 20px;
+            cursor: pointer;
+            white-space: nowrap;
+            transition: all 0.3s ease;
+        }
+
+        .font-option:hover {
+            background: var(--primary-color);
+            color: white;
+        }
+
+        /* 響應式調整 */
+        @media (max-width: 768px) {
+            .container {
+                padding: 10px;
+            }
+
+            .theme-selector {
+                grid-template-columns: 1fr;
+            }
+
+            .cake-preview {
+                width: 250px;
+                height: 250px;
+            }
+
+            .font-selector {
+                flex-wrap: wrap;
+            }
+        }
+
+        /* 動畫效果 */
+        .animate-in {
+            animation: fadeIn 0.5s ease forwards;
+        }
+
+        @keyframes fadeIn {
+            from { 
+                opacity: 0; 
+                transform: translateY(20px); 
+            }
+            to { 
+                opacity: 1; 
+                transform: translateY(0); 
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <!-- 頂部導航 -->
+    <header class="header">
+        <h1>夢幻蛋糕工作室</h1>
+        <p>創造屬於您的完美蛋糕</p>
+    </header>
+
+    <div class="container">
+        <!-- 歡迎區塊 -->
+        <section class="welcome-section animate-in">
+            <h2>開始定製您的專屬蛋糕</h2>
+            <p>選擇主題、口味、裝飾，創造獨一無二的蛋糕</p>
+        </section>
+
+        <!-- 主題選擇器 -->
+        <div class="theme-selector animate-in">
+            <div class="theme-card" onclick="selectTheme('classic')">
+                <i class="fas fa-birthday-cake"></i>
+                <h3>經典主題</h3>
+                <p>優雅永恆的傳統風格</p>
+            </div>
+            <div class="theme-card" onclick="selectTheme('romantic')">
+                <i class="fas fa-heart"></i>
+                <h3>浪漫主題</h3>
+                <p>充滿愛意的甜蜜設計</p>
+            </div>
+            <div class="theme-card" onclick="selectTheme('fantasy')">
+                <i class="fas fa-star"></i>
+                <h3>夢幻主題</h3>
+                <p>奇妙繽紛的童話風格</p>
+            </div>
+        </div>
+
+        <!-- 設計區塊 -->
+        <div class="design-section">
+            <!-- 預覽區域 -->
+            <div class="preview-box animate-in">
+                <h3>蛋糕預覽</h3>
+                <div class="cake-preview">
+                    <div class="cake-container" id="cake-preview">
+                        <!-- 蛋糕層會通過JavaScript動態生成 -->
+                    </div>
+                </div>
+                
+                <!-- 尺寸選擇器 -->
+                <div class="size-selector">
+                    <div class="size-option" onclick="selectSize(6)">6"</div>
+                    <div class="size-option" onclick="selectSize(8)">8"</div>
+                    <div class="size-option" onclick="selectSize(10)">10"</div>
+                </div>
+            </div>
+
+            <!-- 配料選擇器 -->
+            <div class="ingredients-selector animate-in">
+                <div class="selector-group">
+                    <h3 class="selector-title">蛋糕口味</h3>
+                    <div class="options-grid">
+                        <div class="option-item" onclick="selectIngredient('flavor', '香草', '#FFE4B5')">
+                            <i class="fas fa-ice-cream"></i>
+                            <div>香草</div>
+                        </div>
+                        <div class="option-item" onclick="selectIngredient('flavor', '巧克力', '#8B4513')">
+                            <i class="fas fa-cookie"></i>
+                            <div>巧克力</div>
+                        </div>
+                        <div class="option-item" onclick="selectIngredient('flavor', '紅絲絨', '#DC143C')">
+                            <i class="fas fa-heart"></i>
+                            <div>紅絲絨</div>
+                        </div>
+                        <div class="option-item" onclick="selectIngredient('flavor', '抹茶', '#90EE90')">
+                            <i class="fas fa-leaf"></i>
+                            <div>抹茶</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="selector-group">
+                    <h3 class="selector-title">餡料選擇</h3>
+                    <div class="options-grid">
+                        <div class="option-item" onclick="selectIngredient('filling', '奶油', '#FFFAF0')">
+                            <i class="fas fa-cheese"></i>
+                            <div>奶油</div>
+                        </div>
+                        <div class="option-item" onclick="selectIngredient('filling', '水果', '#FFB6C1')">
+                            <i class="fas fa-apple-alt"></i>
+                            <div>水果</div>
+                        </div>
+                        <div class="option-item" onclick="selectIngredient('filling', '巧克力', '#8B4513')">
+                            <i class="fas fa-cookie-bite"></i>
+                            <div>巧克力</div>
+                        </div>
+                        <div class="option-item" onclick="selectIngredient('filling', '焦糖', '#DEB887')">
+                            <i class="fas fa-candy-cane"></i>
+                            <div>焦糖</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="selector-group">
+                    <h3 class="selector-title">裝飾選擇</h3>
+                    <div class="options-grid">
+                        <div class="option-item" onclick="selectIngredient('topping', '水果', '#FF69B4')">
+                            <i class="fas fa-apple-alt"></i>
+                            <div>水果</div>
+                        </div>
+                        <div class="option-item" onclick="selectIngredient('topping', '巧克力片', '#8B4513')">
+                            <i class="fas fa-square"></i>
+                            <div>巧克力片</div>
+                        </div>
+                        <div class="option-item" onclick="selectIngredient('topping', '糖花', '#FFB6C1')">
+                            <i class="fas fa-cannabis"></i>
+                            <div>糖花</div>
+                        </div>
+                        <div class="option-item" onclick="selectIngredient('topping', '馬卡龍', '#DDA0DD')">
+                            <i class="fas fa-circle"></i>
+                            <div>馬卡龍</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 文字裝飾編輯器 -->
+        <div class="text-decorator animate-in">
+            <h3>添加祝福語</h3>
+            <input type="text" class="text-input" placeholder="輸入想要寫在蛋糕上的文字" onchange="updateText(this.value)">
+            <div class="font-selector">
+                <div class="font-option" onclick="selectFont('Arial')">經典字體</div>
+                <div class="font-option" onclick="selectFont('Cursive')">手寫字體</div>
+                <div class="font-option" onclick="selectFont('Fantasy')">藝術字體</div>
+            </div>
+        </div>
+
+        <!-- 價格計算器 -->
+        <div class="price-calculator animate-in">
+            <h3>價格明細</h3>
+            <div class="price-row">
+                <span>基本價格</span>
+                <span id="base-price">$0</span>
+            </div>
+            <div class="price-row">
+                <span>配料加價</span>
+                <span id="ingredients-price">$0</span>
+            </div>
+            <div class="price-row">
+                <span>裝飾費用</span>
+                <span id="decoration-price">$0</span>
+            </div>
+            <div class="total-price">
+                <span>總價</span>
+                <span id="total-price">$0</span>
+            </div>
+            <button class="order-button" onclick="submitOrder()">
+                <i class="fas fa-shopping-cart"></i> 預訂蛋糕
+            </button>
+        </div>
+    </div>
+    <!-- JavaScript代碼 - 放在</body>標籤前 -->
+    <script>
+        // 全局變量
+        let selectedSize = 8;
+        let selectedTheme = null;
+        let selectedIngredients = {
+            flavor: null,
+            filling: null,
+            topping: null
+        };
+        let cakeText = '';
+        let selectedFont = 'Arial';
+
+        // 主題選擇
+        function selectTheme(theme) {
+            selectedTheme = theme;
+            document.querySelectorAll('.theme-card').forEach(card => {
+                card.classList.remove('selected');
+            });
+            event.target.closest('.theme-card').classList.add('selected');
+            updatePreview();
+        }
+
+        // 尺寸選擇
+        function selectSize(size) {
+            selectedSize = size;
+            document.querySelectorAll('.size-option').forEach(option => {
+                option.classList.remove('selected');
+            });
+            event.target.classList.add('selected');
+            updatePreview();
+            calculatePrice();
+        }
+
+        // 配料選擇
+        function selectIngredient(type, name, color) {
+            selectedIngredients[type] = { name, color };
+            
+            // 更新選擇狀態
+            const options = event.target.closest('.options-grid').querySelectorAll('.option-item');
+            options.forEach(option => option.classList.remove('selected'));
+            event.target.closest('.option-item').classList.add('selected');
+
+            updatePreview();
+            calculatePrice();
+        }
+
+        // 更新預覽
+        function updatePreview() {
+            const preview = document.getElementById('cake-preview');
+            preview.innerHTML = '';
+
+            // 基本層
+            const baseSize = selectedSize * 20;
+            const baseLayer = createCakeLayer(baseSize, selectedIngredients.flavor?.color || '#FFE4B4');
+            baseLayer.style.bottom = '0';
+            preview.appendChild(baseLayer);
+
+            // 夾心層
+            if (selectedIngredients.filling) {
+                const fillingLayer = createCakeLayer(baseSize - 20, selectedIngredients.filling.color);
+                fillingLayer.style.bottom = `${baseSize/3}px`;
+                preview.appendChild(fillingLayer);
+            }
+
+            // 裝飾層
+            if (selectedIngredients.topping) {
+                const toppingLayer = createCakeLayer(baseSize - 40, selectedIngredients.topping.color);
+                toppingLayer.style.bottom = `${baseSize/3 + 20}px`;
+                preview.appendChild(toppingLayer);
+                
+                // 添加裝飾元素
+                addDecorations(preview, baseSize);
+            }
+
+            // 添加文字
+            if (cakeText) {
+                addCakeText(preview, baseSize);
+            }
+        }
+
+        // 創建蛋糕層
+        function createCakeLayer(size, color) {
+            const layer = document.createElement('div');
+            layer.className = 'cake-layer';
+            layer.style.width = `${size}px`;
+            layer.style.height = `${size/3}px`;
+            layer.style.backgroundColor = color;
+
+            // 添加紋理
+            const texture = document.createElement('div');
+            texture.className = 'layer-texture';
+            layer.appendChild(texture);
+
+            return layer;
+        }
+
+        // 添加裝飾
+        function addDecorations(container, baseSize) {
+            const decorations = document.createElement('div');
+            decorations.className = 'cake-decoration';
+            
+            // 根據主題添加不同的裝飾
+            const decorTypes = {
+                classic: ['🍓', '🍊', '🫐'],
+                romantic: ['💝', '💖', '💕'],
+                fantasy: ['⭐', '🌟', '✨']
+            };
+
+            const currentDecor = decorTypes[selectedTheme] || decorTypes.classic;
+            
+            // 隨機添加裝飾
+            for (let i = 0; i < 5; i++) {
+                const decor = document.createElement('div');
+                decor.className = 'decoration-item';
+                decor.textContent = currentDecor[Math.floor(Math.random() * currentDecor.length)];
+                decor.style.left = `${Math.random() * 80 + 10}%`;
+                decor.style.top = `${Math.random() * 80 + 10}%`;
+                decorations.appendChild(decor);
+            }
+
+            container.appendChild(decorations);
+        }
+
+        // 添加蛋糕文字
+        function addCakeText(container, baseSize) {
+            const textElement = document.createElement('div');
+            textElement.style.position = 'absolute';
+            textElement.style.width = '100%';
+            textElement.style.textAlign = 'center';
+            textElement.style.bottom = `${baseSize/2}px`;
+            textElement.style.color = '#333';
+            textElement.style.fontFamily = selectedFont;
+            textElement.style.fontSize = '16px';
+            textElement.style.textShadow = '1px 1px 2px white';
+            textElement.textContent = cakeText;
+            container.appendChild(textElement);
+        }
+
+        // 更新文字
+        function updateText(text) {
+            cakeText = text;
+            updatePreview();
+        }
+
+        // 選擇字體
+        function selectFont(font) {
+            selectedFont = font;
+            document.querySelectorAll('.font-option').forEach(option => {
+                option.classList.remove('selected');
+            });
+            event.target.classList.add('selected');
+            updatePreview();
+        }
+
+        // 計算價格
+        function calculatePrice() {
+            const basePrice = selectedSize * 50; // 基本價格
+            const ingredientsPrice = Object.values(selectedIngredients)
+                .filter(v => v)
+                .length * 30; // 配料價格
+            const decorationPrice = selectedTheme ? 50 : 0; // 主題裝飾價格
+
+            document.getElementById('base-price').textContent = `$${basePrice}`;
+            document.getElementById('ingredients-price').textContent = `$${ingredientsPrice}`;
+            document.getElementById('decoration-price').textContent = `$${decorationPrice}`;
+            document.getElementById('total-price').textContent = 
+                `$${basePrice + ingredientsPrice + decorationPrice}`;
+        }
+
+        // 提交訂單
+        function submitOrder() {
+            if (!selectedTheme || !selectedIngredients.flavor) {
+            alert('請至少選擇主題和蛋糕口味！');
+            return;
+        }
+
+        // 準備訂單信息
+        const orderDetails = `
+致夢幻蛋糕工作室：
+
+我想訂購以下蛋糕：
+─────────────
+尺寸：${selectedSize}吋
+主題：${selectedTheme}
+蛋糕口味：${selectedIngredients.flavor.name}
+${selectedIngredients.filling ? '餡料：' + selectedIngredients.filling.name : ''}
+${selectedIngredients.topping ? '裝飾：' + selectedIngredients.topping.name : ''}
+${cakeText ? '蛋糕文字：' + cakeText : ''}
+總價：${document.getElementById('total-price').textContent}
+─────────────`;
+
+        // 編碼訊息用於URL
+        const encodedMessage = encodeURIComponent(orderDetails);
+        
+        // 創建WhatsApp連結
+        const whatsappLink = `https://wa.me/85262196181?text=${encodedMessage}`;
+
+        // 在新窗口打開WhatsApp
+        window.open(whatsappLink, '_blank');
+    }
+
+        // 初始化
+        document.querySelector('.size-option').click();
+        calculatePrice();
+    </script>
+</body>
+</html>
